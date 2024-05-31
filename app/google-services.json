@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "272373085057",
+    "project_id": "population-census-94717",
+    "storage_bucket": "population-census-94717.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:272373085057:android:e89517336a09e1c2c5ae80",
+        "android_client_info": {
+          "package_name": "com.example.populationcensus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEjOw__JAGF60OE0SwPy4iqTtsRKJbF8w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
