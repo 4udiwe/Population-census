@@ -1,5 +1,7 @@
 package com.example.populationcensus;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,58 +9,67 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+
 public class ProfileFragment extends Fragment {
+    private TextView name, secondname, age, city, sex;
+    private Button bEdit, bAdd;
+    private SharedPreferences pref;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public ProfileFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        pref = getActivity().getSharedPreferences("User", Context.MODE_PRIVATE);
+
+        name = view.findViewById(R.id.tvName);
+        secondname = view.findViewById(R.id.tvSecondname);
+        age = view.findViewById(R.id.tvAge);
+        city = view.findViewById(R.id.tvCity);
+        sex = view.findViewById(R.id.tvSex);
+        bEdit = view.findViewById(R.id.bEdit);
+        bAdd = view.findViewById(R.id.bAdd);
+
+        name.setText(pref.getString("firstname", "Name"));
+        secondname.setText(pref.getString("lastname", "Secondname"));
+        age.setText(String.valueOf(pref.getInt("age", 0)));
+        city.setText(pref.getString("city", "City"));
+        sex.setText(pref.getString("sex", "Sex"));
+
+        bEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.fragmentContainerEditUser, new EditUserFragment(), null)
+                        .commit();
+            }
+        });
+
+        bAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference databaseReference;
+                String USER_KEY = "user";
+                String DB_URL = "https://population-census-94717-default-rtdb.europe-west1.firebasedatabase.app/";
+                databaseReference = FirebaseDatabase.getInstance(DB_URL).getReference(USER_KEY);
+                User user = new User(databaseReference.getKey(),
+                        pref.getString("email", ""),
+                        pref.getString("firstname", "Name"),
+                        pref.getString("secondname", "Secondname"),
+                        pref.getInt("age", 0),
+                        pref.getString("city", "City"),
+                        pref.getString("sex", "Sex"));
+                databaseReference.push().setValue(user);
+            }
+        });
+        return view;
     }
 }

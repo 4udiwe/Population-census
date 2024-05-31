@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentContainerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -23,41 +24,15 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class RegistrationActivity extends AppCompatActivity {
 
-
-    private EditText emailEditText, passwordEditText;
-    private Button loginButton, signUpButton;
     private FirebaseAuth firebaseAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registeration);
-
-        emailEditText =     findViewById(R.id.emailEditText);
-        passwordEditText =  findViewById(R.id.passwordEditText);
-        loginButton =       findViewById(R.id.loginButton);
-        signUpButton =      findViewById(R.id.signUpButton);
-        firebaseAuth =      FirebaseAuth.getInstance();
-
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email =      emailEditText.getText().toString();
-                String password =   passwordEditText.getText().toString();
-
-                signUp(email, password);
-            }
-        });
-
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email =      emailEditText.getText().toString();
-                String password =   passwordEditText.getText().toString();
-
-                signIn(email, password);
-            }
-        });
+        firebaseAuth = FirebaseAuth.getInstance();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView, new LoginFragment(), null).commit();
     }
+
 
     @Override
     protected void onStart() {
@@ -70,67 +45,5 @@ public class RegistrationActivity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }
-    }
-
-    private void signUp(String email, String password) {
-        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-            Toast.makeText(RegistrationActivity.this, "Заполните поля", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    FirebaseUser user = firebaseAuth.getCurrentUser();
-                    assert user != null;
-                    sendEmailVerification();
-                } else {
-                    Toast.makeText(RegistrationActivity.this, "Ошибка регистрации", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    private void signIn(String email, String password) {
-        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-            Toast.makeText(RegistrationActivity.this, "Заполните поля", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    FirebaseUser user = firebaseAuth.getCurrentUser();
-                    assert user != null;
-                    if (user.isEmailVerified()) {
-                        Toast.makeText(RegistrationActivity.this, "Вы успешно вошли", Toast.LENGTH_SHORT).show();
-
-                        Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(RegistrationActivity.this, "Подтвердите вашу почту для входа", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(RegistrationActivity.this, "Ошибка входа", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    private void sendEmailVerification() {
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        assert user != null;
-        user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(RegistrationActivity.this, "На вашу почту было отправлено письмо для подтверждения", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(RegistrationActivity.this, "Ошибка подтверждения адреса", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 }
