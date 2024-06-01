@@ -1,8 +1,11 @@
 package com.example.populationcensus;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -16,6 +19,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -24,8 +28,9 @@ import java.util.Objects;
 
 public class ProfileFragment extends Fragment {
     private TextView name, secondname, age, city, sex, bApply, bCancel;
-    private Button bEdit, bAdd;
+    private Button bEdit, bLogout;
     private SharedPreferences pref;
+    private FirebaseAuth firebaseAuth;
     private Dialog dialog;
 
 
@@ -35,7 +40,10 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        firebaseAuth = FirebaseAuth.getInstance();
         pref = getActivity().getSharedPreferences("User", Context.MODE_PRIVATE);
+
+        writeUserToDB();
 
         name = view.findViewById(R.id.tvName);
         secondname = view.findViewById(R.id.tvSecondname);
@@ -43,14 +51,11 @@ public class ProfileFragment extends Fragment {
         city = view.findViewById(R.id.tvCity);
         sex = view.findViewById(R.id.tvSex);
         bEdit = view.findViewById(R.id.bEdit);
-        bAdd = view.findViewById(R.id.bAdd);
-
+        bLogout = view.findViewById(R.id.bLogout);
 
         update();
 
         bEdit.setOnClickListener(new View.OnClickListener() {
-
-
             @Override
             public void onClick(View v) {
                 dialog = new Dialog(getContext());
@@ -91,33 +96,58 @@ public class ProfileFragment extends Fragment {
                         dialog.dismiss();
                         Toast.makeText(getContext(), "User data updated", Toast.LENGTH_SHORT).show();
                         update();
+                        writeUserToDB();
 
                     }
                 });
             }
         });
 
-        bAdd.setOnClickListener(new View.OnClickListener() {
+        bLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference databaseReference;
-                String USER_KEY = "user";
-                String DB_URL = "https://population-census-94717-default-rtdb.europe-west1.firebasedatabase.app/";
-                databaseReference = FirebaseDatabase.getInstance(DB_URL).getReference(USER_KEY);
-                User user = new User(databaseReference.getKey(),
-                        pref.getString("email", ""),
-                        pref.getString("firstname", "Name"),
-                        pref.getString("secondname", "Secondname"),
-                        pref.getInt("age", 0),
-                        pref.getString("city", "City"),
-                        pref.getString("sex", "Sex"));
-                databaseReference.push().setValue(user);
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                builder.setTitle("Account log out");
+                builder.setMessage("Do you want to log out?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        firebaseAuth.signOut();
+                        Intent intent = new Intent(getActivity(), RegistrationActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    }
+                });
+                builder.setNegativeButton("Do not log out", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
             }
         });
         return view;
     }
 
-    public void update(){
+    private void writeUserToDB(){
+        DatabaseReference databaseReference;
+        String USER_KEY = "user";
+        String DB_URL = "https://population-census-94717-default-rtdb.europe-west1.firebasedatabase.app/";
+        databaseReference = FirebaseDatabase.getInstance(DB_URL).getReference(USER_KEY);
+
+        User user = new User(databaseReference.push().getKey(),
+                pref.getString("email", ""),
+                pref.getString("firstname", "Name"),
+                pref.getString("lastname", "Secondname"),
+                pref.getInt("age", 0),
+                pref.getString("city", "City"),
+                pref.getString("sex", "Sex"));
+        databaseReference.child(user.email).setValue(user);
+    }
+
+    private void update(){
         name.setText(pref.getString("firstname", "Name"));
         secondname.setText(pref.getString("lastname", "Secondname"));
         age.setText(String.valueOf(pref.getInt("age", 0)));

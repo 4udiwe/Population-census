@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,12 +33,14 @@ public class ListFragment extends Fragment implements UserAdapter.OnItemClickLis
     private UserAdapter userAdapter;
     private ArrayList<User> userArrayList;
     private DatabaseReference databaseReference;
+    private SearchView searchView;
     private Dialog dialog;
     private static final String USER_KEY = "user", DB_URL = "https://population-census-94717-default-rtdb.europe-west1.firebasedatabase.app/";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
+        searchView = view.findViewById(R.id.searchView);
 
         databaseReference = FirebaseDatabase.getInstance(DB_URL).getReference(USER_KEY);
         userArrayList = new ArrayList<>();
@@ -77,10 +80,7 @@ public class ListFragment extends Fragment implements UserAdapter.OnItemClickLis
                 tvCity.setText(selectedUser.getCity());
                 tvEmail.setText(selectedUser.getEmail());
 
-
-
                 dialog.show();
-
                 tvBack.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -90,10 +90,22 @@ public class ListFragment extends Fragment implements UserAdapter.OnItemClickLis
             }
         });
 
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                userAdapter.filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                userAdapter.filter(newText);
+                return false;
+            }
+        });
+
         return view;
     }
-
-
 
 
     @Override

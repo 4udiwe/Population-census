@@ -11,7 +11,7 @@ public class User implements Serializable {
     }
     public User(String id, String email, String firstname, String lastname, int age, String city, String sex) {
         this.id = id;
-        this.email = email;
+        this.email = email.replace(".", "(dot)");
         this.firstname = firstname;
         this.lastname = lastname;
         this.age = age;
@@ -38,7 +38,7 @@ public class User implements Serializable {
         this.id = id;
     }
     public String getEmail() {
-        return email;
+        return email.replace("(dot)", ".");
     }
 
     public void setEmail(String email) {

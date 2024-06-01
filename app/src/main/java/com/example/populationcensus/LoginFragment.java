@@ -63,7 +63,7 @@ public class LoginFragment extends Fragment {
 
     private void signIn(String email, String password) {
         if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-            Toast.makeText(this.getContext(), "Заполните поля", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.getContext(), "Fill in all gaps", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -74,15 +74,15 @@ public class LoginFragment extends Fragment {
                     FirebaseUser user = firebaseAuth.getCurrentUser();
                     assert user != null;
                     if (user.isEmailVerified()) {
-                        Toast.makeText(getContext(), "Вы успешно вошли", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Entered successfully", Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent(getActivity(), MainActivity.class);
                         startActivity(intent);
                     } else {
-                        Toast.makeText(getContext(), "Подтвердите вашу почту для входа", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Verify your email adress", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(getContext(), "Ошибка входа", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Error while entering", Toast.LENGTH_SHORT).show();
                 }
             }
         });

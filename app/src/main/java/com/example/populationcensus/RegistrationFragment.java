@@ -94,7 +94,7 @@ public class RegistrationFragment extends Fragment {
         TextUtils.isEmpty(first) || TextUtils.isEmpty(last) ||
         TextUtils.isEmpty(city) || (age == 0) || !(rbMale.isChecked() || rbFemale.isChecked()))
         {
-            Toast.makeText(getContext(), "Заполните поля", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Fill in all gaps", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -106,7 +106,7 @@ public class RegistrationFragment extends Fragment {
                     assert user != null;
                     sendEmailVerification();
                 } else {
-                    Toast.makeText(getContext(), "Ошибка регистрации", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Registration error", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -128,9 +128,9 @@ public class RegistrationFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    Toast.makeText(getContext(), "На вашу почту было отправлено письмо для подтверждения", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Verification sent on your email", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getContext(), "Ошибка подтверждения адреса", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Verification error", Toast.LENGTH_SHORT).show();
                 }
             }
         });

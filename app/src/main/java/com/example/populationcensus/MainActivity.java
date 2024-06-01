@@ -21,14 +21,12 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             if (item.getItemId() == R.id.list) {
-                // Обработка выбора раздела "Домой"
                 ListFragment fragment = new ListFragment();
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.fragment_container, fragment);
                 fragmentTransaction.commit();
                 return true;
             } else if (item.getItemId() == R.id.profile) {
-                // Обработка выбора раздела "Настройки"
                 ProfileFragment fragment = new ProfileFragment();
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_container, fragment);
@@ -37,13 +35,9 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
-        ListFragment fragment = new ListFragment();
+        ProfileFragment fragment = new ProfileFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.commit();
-    }
-
-    private void ReplaceFragment(Fragment fragment){
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment, null).commit();
     }
 }

@@ -63,8 +63,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         } else {
             String query = text.toLowerCase().trim();
             for (User user : fullList) {
-                if (user.getFirstname().toLowerCase().contains(query) || user.getLastname().toLowerCase().contains(query)
-                 || user.getCity().toLowerCase().contains(query)) {
+                String struser = user.getFirstname().toLowerCase() + " " + user.getLastname().toLowerCase() + " " + user.getCity().toLowerCase();
+                if (struser.contains(query)){
                     userArrayList.add(user);
                 }
             }
