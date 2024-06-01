@@ -1,64 +1,128 @@
 package com.example.populationcensus;
 
+import android.app.Dialog;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ListFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ListFragment extends Fragment {
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import java.sql.RowId;
+import java.util.ArrayList;
+import java.util.Objects;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
-    public ListFragment() {
-        // Required empty public constructor
-    }
+public class ListFragment extends Fragment implements UserAdapter.OnItemClickListener{
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ListFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ListFragment newInstance(String param1, String param2) {
-        ListFragment fragment = new ListFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
+    private UserAdapter userAdapter;
+    private ArrayList<User> userArrayList;
+    private DatabaseReference databaseReference;
+    private Dialog dialog;
+    private static final String USER_KEY = "user", DB_URL = "https://population-census-94717-default-rtdb.europe-west1.firebasedatabase.app/";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_list, container, false);
+
+        databaseReference = FirebaseDatabase.getInstance(DB_URL).getReference(USER_KEY);
+        userArrayList = new ArrayList<>();
+        userAdapter = new UserAdapter(userArrayList);
+        getDataFromDB();
+
+        RecyclerView recyclerView = view.findViewById(R.id.rvUserList);
+        recyclerView.setAdapter(userAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+
+
+        userAdapter.setOnItemClickListener(new UserAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Toast.makeText(getContext(), "itemclicked", Toast.LENGTH_SHORT).show();
+                dialog = new Dialog(requireContext());
+                dialog.setContentView(R.layout.user_info);
+                dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                dialog.getWindow().setBackgroundDrawable(getActivity().getDrawable(R.drawable.dialog_bg));
+                dialog.setCancelable(false);
+
+                User selectedUser = userArrayList.get(position);
+
+                TextView tvName, tvAge, tvCity, tvSex, tvEmail, tvBack;
+                tvName = dialog.findViewById(R.id.tvUserInfoName);
+                tvAge = dialog.findViewById(R.id.tvUserInfoAge);
+                tvCity = dialog.findViewById(R.id.tvUserInfoCity);
+                tvSex = dialog.findViewById(R.id.tvUserInfoSex);
+                tvEmail = dialog.findViewById(R.id.tvUserInfoEmail);
+                tvBack = dialog.findViewById(R.id.tvUserInfoBack);
+
+
+                tvName.setText(selectedUser.getFirstname() + " " + selectedUser.getLastname());
+                tvAge.setText(String.valueOf(selectedUser.getAge()));
+                tvSex.setText(selectedUser.getSex());
+                tvCity.setText(selectedUser.getCity());
+                tvEmail.setText(selectedUser.getEmail());
+
+
+
+                dialog.show();
+
+                tvBack.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        return view;
+    }
+
+
+
+
+    @Override
+    public void onItemClick(int position) {
+        //Toast.makeText(getContext(), "itemclicked", Toast.LENGTH_SHORT).show();
+
+    }
+    private void getDataFromDB() {
+        ValueEventListener valueEventListener = new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!userArrayList.isEmpty()) {
+                    userArrayList.clear();
+                }
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    User user = dataSnapshot.getValue(User.class);
+                    assert user != null;
+                    user.setId(dataSnapshot.getKey());
+                    userArrayList.add(user);
+                }
+                userAdapter.updateData(userArrayList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+        databaseReference.addValueEventListener(valueEventListener);
     }
 }
