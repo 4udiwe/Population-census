@@ -13,9 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="224dp"
         android:ems="10"
-        android:hint="Электронная почта"
+        android:hint="E-mail"
         android:inputType="text"
-        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,43 +22,36 @@
 
     <EditText
         android:id="@+id/passwordEditText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailEditText"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Пароль (Минимум 8 символов)"
+        android:hint="Password (8 characters)"
         android:inputType="text"
-        android:textColor="@color/black"
-        tools:layout_editor_absoluteX="44dp"
-        tools:layout_editor_absoluteY="266dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emailEditText" />
 
     <Button
         android:id="@+id/loginButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passwordEditText"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/black"
-        android:text="Войти"
-        android:textColor="@color/white"
-        tools:layout_editor_absoluteX="26dp"
-        tools:layout_editor_absoluteY="341dp" />
+        android:backgroundTint="@color/button_gray"
+        android:text="Log in"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/passwordEditText" />
 
     <Button
         android:id="@+id/signUpButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginButton"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/black"
-        android:text="Зарегистрироваться"
-        android:textColor="@color/white"
-        tools:layout_editor_absoluteX="26dp"
-        tools:layout_editor_absoluteY="452dp" />
+        android:backgroundTint="@color/button_gray"
+        android:text="Sigh up"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loginButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
