@@ -4,6 +4,9 @@
     <item android:title="List"
         android:icon="@drawable/list"
         android:id="@+id/list"/>
+    <item android:title="Statistics"
+        android:id="@+id/statistics"
+        android:icon="@drawable/baseline_bar_chart_24"/>
     <item android:title="Profile"
         android:icon="@drawable/profile"
         android:id="@+id/profile"/>

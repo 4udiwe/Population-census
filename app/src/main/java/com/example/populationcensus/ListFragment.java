@@ -56,7 +56,6 @@ public class ListFragment extends Fragment implements UserAdapter.OnItemClickLis
         userAdapter.setOnItemClickListener(new UserAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                Toast.makeText(getContext(), "itemclicked", Toast.LENGTH_SHORT).show();
                 dialog = new Dialog(requireContext());
                 dialog.setContentView(R.layout.user_info);
                 dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -109,10 +108,7 @@ public class ListFragment extends Fragment implements UserAdapter.OnItemClickLis
 
 
     @Override
-    public void onItemClick(int position) {
-        //Toast.makeText(getContext(), "itemclicked", Toast.LENGTH_SHORT).show();
-
-    }
+    public void onItemClick(int position) {}
     private void getDataFromDB() {
         ValueEventListener valueEventListener = new ValueEventListener() {
 

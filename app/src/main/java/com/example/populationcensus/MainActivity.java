@@ -32,6 +32,11 @@ public class MainActivity extends AppCompatActivity {
                 ft.replace(R.id.fragment_container, fragment);
                 ft.commit();
                 return true;
+            } else if (item.getItemId() == R.id.statistics) {
+                StatisticsFragment fragment = new StatisticsFragment();
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.fragment_container, fragment);
+                ft.commit();
             }
             return false;
         });

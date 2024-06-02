@@ -34,6 +34,7 @@ android {
 
 dependencies {
 
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
     implementation(libs.google.firebase.database)
     implementation(libs.appcompat)
